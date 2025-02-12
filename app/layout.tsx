@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Provider } from "@/components/ui/provider";
 import ReactQueryProvider from "@/components/providers/react-query-provider";
+import { Analytics } from "@vercel/analytics/react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -41,6 +42,7 @@ export default function RootLayout({
         <Provider>
           <ReactQueryProvider>{children}</ReactQueryProvider>
         </Provider>
+        <Analytics />
       </body>
     </html>
   );
