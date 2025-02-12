@@ -1,5 +1,5 @@
 import { CyclistFtpBoosterFormSchema } from "@/utils/schema";
-import { useMutation } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 export interface CyclistFtpBoosterPlanning {
   summary: string;
@@ -17,11 +17,22 @@ const fetchGenerateApi = async (
   const response = await fetch("/api/generate", {
     method: "POST",
     body: JSON.stringify(payload),
+    redirect: "follow",
   });
+  if (response.status === 401) {
+    const { redirectUrl } = await response.json();
+    window.location.href = redirectUrl;
+    return Promise.reject();
+  }
+
   return await response.json();
 };
 
-export const useGenerateMutation = () =>
-  useMutation({
-    mutationFn: (data?: CyclistFtpBoosterFormSchema) => fetchGenerateApi(data!),
+export const useGenerateQuery = (data?: CyclistFtpBoosterFormSchema) =>
+  useQuery({
+    queryKey: ["fetchGenerate", data],
+    queryFn: () => fetchGenerateApi(data!),
+    select: (data) => data,
+    enabled: !!data,
+    refetchOnWindowFocus: false,
   });

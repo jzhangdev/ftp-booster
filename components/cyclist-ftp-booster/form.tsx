@@ -1,5 +1,13 @@
 "use client";
-import { Button, Card, Fieldset, Heading, HStack } from "@chakra-ui/react";
+import {
+  Button,
+  Card,
+  Center,
+  Fieldset,
+  Heading,
+  HStack,
+  Text,
+} from "@chakra-ui/react";
 import {
   NumberInputField,
   NumberInputRoot,
@@ -12,35 +20,72 @@ import {
   CyclistFtpBoosterFormSchema,
   cyclistFtpBoosterFormSchema,
 } from "@/utils/schema";
+import { useQueryState, parseAsJson, parseAsBoolean } from "nuqs";
+import { useEffect, useRef } from "react";
 
 interface Props {
   isSubmitting: boolean;
-  onSubmit: (data: CyclistFtpBoosterFormSchema) => Promise<void>;
+  onSubmit: (data: CyclistFtpBoosterFormSchema) => Promise<void> | void;
 }
 
 export const Form = ({ isSubmitting, onSubmit }: Props) => {
+  const [isConnectedToStrava, setIsConnectedToStrava] = useQueryState(
+    "isConnectedToStrava",
+    parseAsBoolean.withDefault(false)
+  );
+  const [formData, setFormData] = useQueryState(
+    "formData",
+    parseAsJson(cyclistFtpBoosterFormSchema.parse).withDefault({
+      current: 120,
+      target: 150,
+      daysOfWeek: 3,
+      hoursOfDay: 2,
+    })
+  );
+
+  const formRef = useRef<HTMLFormElement>(null);
+
   const {
     handleSubmit,
     register,
     formState: { errors },
   } = useForm<z.infer<typeof cyclistFtpBoosterFormSchema>>({
-    defaultValues: {
-      current: 120,
-      target: 150,
-      daysOfWeek: 3,
-      hoursOfDay: 2,
-    },
+    defaultValues: formData,
     resolver: zodResolver(cyclistFtpBoosterFormSchema),
   });
+
+  useEffect(() => {
+    if (isConnectedToStrava && formRef.current) {
+      setIsConnectedToStrava(false);
+      onSubmit(formData);
+    }
+  }, [
+    isConnectedToStrava,
+    formRef,
+    formData,
+    onSubmit,
+    setIsConnectedToStrava,
+  ]);
 
   return (
     <Card.Root>
       <Card.Header>
         <Heading>🚴 Cycling FTP Booster</Heading>
+        <Text>
+          Input your current and target FTP, along with your schedule
+          preferences, to receive customized workouts designed to enhance your
+          cycling performance.
+        </Text>
+        <Text>
+          Our tool integrates with Strava, leveraging your recent activities to
+          fine-tune and personalize your training plan for optimal results.
+        </Text>
       </Card.Header>
       <Card.Body>
         <form
+          ref={formRef}
           onSubmit={handleSubmit(async (data) => {
+            setFormData(data);
             await onSubmit(data);
           })}
         >
@@ -48,7 +93,7 @@ export const Form = ({ isSubmitting, onSubmit }: Props) => {
             <Fieldset.Content>
               <HStack>
                 <Field
-                  label="Current FTP"
+                  label="Current FTP (W)"
                   invalid={!!errors.current}
                   errorText={errors.current?.message}
                 >
@@ -65,7 +110,7 @@ export const Form = ({ isSubmitting, onSubmit }: Props) => {
                   </NumberInputRoot>
                 </Field>
                 <Field
-                  label="Target FTP"
+                  label="Target FTP (W)"
                   invalid={!!errors.target}
                   errorText={errors.target?.message}
                 >
@@ -81,8 +126,6 @@ export const Form = ({ isSubmitting, onSubmit }: Props) => {
                     />
                   </NumberInputRoot>
                 </Field>
-              </HStack>
-              <HStack>
                 <Field
                   label="Day of week"
                   invalid={!!errors.daysOfWeek}
@@ -117,13 +160,18 @@ export const Form = ({ isSubmitting, onSubmit }: Props) => {
                 </Field>
               </HStack>
             </Fieldset.Content>
-            <Button
-              type="submit"
-              loading={isSubmitting}
-              disabled={isSubmitting}
-            >
-              🚀 Launch
-            </Button>
+            <Center>
+              <Button
+                type="submit"
+                bgColor="#fc5200"
+                _hover={{ bgColor: "#cc4200" }}
+                loading={isSubmitting}
+                disabled={isSubmitting}
+                fontWeight="bold"
+              >
+                🚀 Launch with Strava
+              </Button>
+            </Center>
           </Fieldset.Root>
         </form>
       </Card.Body>
