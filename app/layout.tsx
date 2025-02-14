@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { Provider } from "@/components/ui/provider";
+import { Provider as ChakraProvider } from "@/components/ui/provider";
 import ReactQueryProvider from "@/components/providers/react-query-provider";
 import { Analytics } from "@vercel/analytics/react";
 import { GoogleAnalytics } from "@next/third-parties/google";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -40,9 +41,11 @@ export default function RootLayout({
         href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎯</text></svg>"
       ></link>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <Provider>
-          <ReactQueryProvider>{children}</ReactQueryProvider>
-        </Provider>
+        <ChakraProvider>
+          <ReactQueryProvider>
+            <NuqsAdapter>{children}</NuqsAdapter>
+          </ReactQueryProvider>
+        </ChakraProvider>
         <GoogleAnalytics gaId={process.env.GOOGLE_ANALYTICS_ID!} />
         <Analytics />
       </body>
