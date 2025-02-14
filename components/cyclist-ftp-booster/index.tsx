@@ -28,9 +28,9 @@ export const CyclistFtpBooster = () => {
       <Container
         paddingTop="12"
         maxW="4xl"
-        opacity={generateQuery.isStale ? 0.5 : 1}
+        opacity={generateQuery.isFetching ? 0.5 : 1}
         transition={
-          generateQuery.isStale
+          generateQuery.isFetching
             ? "opacity 0.2s 0.2s linear"
             : "opacity 0s 0s linear"
         }

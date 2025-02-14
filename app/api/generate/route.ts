@@ -10,7 +10,7 @@ export const POST = async (request: Request) => {
   const payload = await request.json();
   const stravaAccessToken = cookieStore.get("strava:accessToken");
 
-  if (!stravaAccessToken || !stravaAccessToken.value) {
+  const redirectToStravaOauth = () => {
     const oauthUrl = new URL("https://www.strava.com/oauth/authorize");
     const redirectUrl = new URL(`${requestUrl.origin}/api/oauth/strava/token`);
     oauthUrl.searchParams.append(
@@ -30,6 +30,10 @@ export const POST = async (request: Request) => {
         status: 401,
       }
     );
+  };
+
+  if (!stravaAccessToken || !stravaAccessToken.value) {
+    return redirectToStravaOauth();
   }
 
   const activitiesResponse = await fetch(
@@ -41,6 +45,10 @@ export const POST = async (request: Request) => {
       },
     }
   );
+
+  if (activitiesResponse.status === 401) {
+    return redirectToStravaOauth();
+  }
 
   if (activitiesResponse.status === 200) {
     const activities =
