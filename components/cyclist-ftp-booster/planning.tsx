@@ -1,5 +1,5 @@
 import { CyclistFtpBoosterPlanning } from "@/hooks/use-generate-query";
-import { Box, Card, Heading, Text, Stack } from "@chakra-ui/react";
+import { Box, Card, Heading, Text, Stack, Flex, Em } from "@chakra-ui/react";
 
 interface Props {
   data: CyclistFtpBoosterPlanning;
@@ -14,9 +14,33 @@ export const Planning = ({ data }: Props) => {
           {data.weeks.map((week, weekIndex) => {
             return (
               <Box key={weekIndex}>
-                <Heading size="md">{week.summary}</Heading>
+                <Heading size="lg">{week.summary}</Heading>
                 {week.days.map((day, dayIndex) => {
-                  return <Text key={dayIndex}>{day.details}</Text>;
+                  return (
+                    <Box key={dayIndex} marginY="2">
+                      <Heading size="md">{day.details}</Heading>
+                      <Box width="md">
+                        {day.stages.map((stage, stageIndex) => (
+                          <Box
+                            key={stageIndex}
+                            bgColor={stage.color}
+                            color="white"
+                            borderRadius="md"
+                            paddingX="2"
+                          >
+                            <Flex justifyContent="space-between">
+                              <Text fontWeight="bold">
+                                <Em>{stage.name}</Em>
+                              </Text>
+                              <Text fontWeight="bold">
+                                {stage.duration}min@{stage.intensity}w
+                              </Text>
+                            </Flex>
+                          </Box>
+                        ))}
+                      </Box>
+                    </Box>
+                  );
                 })}
               </Box>
             );
