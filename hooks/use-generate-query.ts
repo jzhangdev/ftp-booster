@@ -7,6 +7,12 @@ export interface CyclistFtpBoosterPlanning {
     summary: string;
     days: Array<{
       details: string;
+      stages: Array<{
+        name: string;
+        duration: number;
+        intensity: number;
+        color: string;
+      }>;
     }>;
   }>;
 }
