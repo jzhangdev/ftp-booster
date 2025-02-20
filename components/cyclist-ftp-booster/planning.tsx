@@ -1,5 +1,15 @@
 import { CyclistFtpBoosterPlanning } from "@/hooks/use-generate-query";
-import { Box, Card, Heading, Text, Stack, Flex, Em } from "@chakra-ui/react";
+import {
+  Box,
+  Card,
+  Heading,
+  Text,
+  Stack,
+  Flex,
+  Em,
+  Link,
+} from "@chakra-ui/react";
+import { LuExternalLink } from "react-icons/lu";
 
 interface Props {
   data: CyclistFtpBoosterPlanning;
@@ -8,7 +18,12 @@ interface Props {
 export const Planning = ({ data }: Props) => {
   return (
     <Card.Root>
-      <Card.Header>{data.summary}</Card.Header>
+      <Card.Header>
+        <Link href={`/share/${data.id}`}>
+          Open in public link <LuExternalLink />
+        </Link>
+        {data.summary}
+      </Card.Header>
       <Card.Body>
         <Stack>
           {data.weeks.map((week, weekIndex) => {
@@ -19,13 +34,12 @@ export const Planning = ({ data }: Props) => {
                   return (
                     <Box key={dayIndex} marginY="2">
                       <Heading size="md">{day.details}</Heading>
-                      <Box width="md">
+                      <Box maxW="md">
                         {day.stages.map((stage, stageIndex) => (
                           <Box
                             key={stageIndex}
                             bgColor={stage.color}
                             color="white"
-                            borderRadius="md"
                             paddingX="2"
                           >
                             <Flex justifyContent="space-between">

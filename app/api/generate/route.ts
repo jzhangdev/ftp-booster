@@ -3,12 +3,15 @@ import * as hub from "langchain/hub";
 import { ChatOpenAI } from "@langchain/openai";
 import { cookies } from "next/headers";
 import { DetailedActivityResponse } from "@/types/strava";
+import { Redis } from "@upstash/redis";
+import { v4 as uuidv4 } from "uuid";
 
 export const POST = async (request: Request) => {
   const requestUrl = new URL(request.url);
   const cookieStore = await cookies();
   const payload = await request.json();
   const stravaAccessToken = cookieStore.get("strava:accessToken");
+  const redis = Redis.fromEnv();
 
   const redirectToStravaOauth = () => {
     const oauthUrl = new URL("https://www.strava.com/oauth/authorize");
@@ -78,8 +81,13 @@ export const POST = async (request: Request) => {
         })
       ),
     });
+    const id = uuidv4();
+    redis.set(`share:${id}`, output);
 
-    return NextResponse.json(output);
+    return NextResponse.json({
+      id,
+      ...output,
+    });
   } else {
     return activitiesResponse;
   }
