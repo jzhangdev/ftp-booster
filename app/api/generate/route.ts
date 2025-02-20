@@ -82,7 +82,7 @@ export const POST = async (request: Request) => {
       ),
     });
     const id = uuidv4();
-    redis.set(`share:${id}`, output);
+    await redis.set(`share:${id}`, output);
 
     return NextResponse.json({
       id,
