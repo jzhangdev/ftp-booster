@@ -2,6 +2,7 @@ import { CyclistFtpBoosterFormSchema } from "@/utils/schema";
 import { useQuery } from "@tanstack/react-query";
 
 export interface CyclistFtpBoosterPlanning {
+  id: string;
   summary: string;
   weeks: Array<{
     summary: string;
