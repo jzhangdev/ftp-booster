@@ -59,7 +59,7 @@ export const POST = async (request: Request) => {
     const rideActivities = activities.filter(
       ({ sport_type }) => sport_type === "Ride"
     );
-    const prompt = await hub.pull("cyclist-ftp-booster");
+    const prompt = await hub.pull("cycling-ftp-booster");
     const model = new ChatOpenAI({
       model: "gpt-4o",
     });
@@ -82,7 +82,8 @@ export const POST = async (request: Request) => {
       ),
     });
     const id = uuidv4();
-    await redis.set(`share:${id}`, output);
+    const ttl = 60 * 60 * 24 * 90; // 90 days
+    await redis.setex(`plan:cycling:${id}`, ttl, output);
 
     return NextResponse.json({
       id,

@@ -1,15 +1,15 @@
 "use client";
 import { Form } from "./form";
 import { useGenerateQuery } from "@/hooks/use-generate-query";
-import { Planning } from "./planning";
+import { Plan } from "./plan";
 import { Container } from "@chakra-ui/react";
 import { useState } from "react";
-import { CyclistFtpBoosterFormSchema } from "@/utils/schema";
+import { CyclingFtpBoosterFormSchema } from "@/utils/schema";
 import { useQueryClient } from "@tanstack/react-query";
 
 export const CyclistFtpBooster = () => {
   const queryClient = useQueryClient();
-  const [formData, setFormData] = useState<CyclistFtpBoosterFormSchema>();
+  const [formData, setFormData] = useState<CyclingFtpBoosterFormSchema>();
   const generateQuery = useGenerateQuery(formData);
 
   return (
@@ -35,7 +35,9 @@ export const CyclistFtpBooster = () => {
             : "opacity 0s 0s linear"
         }
       >
-        {generateQuery.data && <Planning data={generateQuery.data} />}
+        {generateQuery.data && (
+          <Plan data={generateQuery.data} isShowingPublicLink />
+        )}
       </Container>
     </Container>
   );

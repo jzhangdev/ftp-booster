@@ -1,12 +1,12 @@
 import { z } from "zod";
 
-export const cyclistFtpBoosterFormSchema = z.object({
+export const cyclingFtpBoosterFormSchema = z.object({
   current: z.number().min(50).positive(),
   target: z.number().min(0).positive(),
   daysOfWeek: z.number().min(0).positive(),
   hoursOfDay: z.number().min(0).positive(),
 });
 
-export type CyclistFtpBoosterFormSchema = z.infer<
-  typeof cyclistFtpBoosterFormSchema
+export type CyclingFtpBoosterFormSchema = z.infer<
+  typeof cyclingFtpBoosterFormSchema
 >;

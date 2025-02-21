@@ -17,15 +17,15 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  CyclistFtpBoosterFormSchema,
-  cyclistFtpBoosterFormSchema,
+  CyclingFtpBoosterFormSchema,
+  cyclingFtpBoosterFormSchema,
 } from "@/utils/schema";
 import { useQueryState, parseAsJson, parseAsBoolean } from "nuqs";
 import { useEffect, useRef } from "react";
 
 interface Props {
   isSubmitting: boolean;
-  onSubmit: (data: CyclistFtpBoosterFormSchema) => Promise<void> | void;
+  onSubmit: (data: CyclingFtpBoosterFormSchema) => Promise<void> | void;
 }
 
 export const Form = ({ isSubmitting, onSubmit }: Props) => {
@@ -35,7 +35,7 @@ export const Form = ({ isSubmitting, onSubmit }: Props) => {
   );
   const [formData, setFormData] = useQueryState(
     "formData",
-    parseAsJson(cyclistFtpBoosterFormSchema.parse).withDefault({
+    parseAsJson(cyclingFtpBoosterFormSchema.parse).withDefault({
       current: 120,
       target: 150,
       daysOfWeek: 3,
@@ -49,9 +49,9 @@ export const Form = ({ isSubmitting, onSubmit }: Props) => {
     handleSubmit,
     register,
     formState: { errors },
-  } = useForm<z.infer<typeof cyclistFtpBoosterFormSchema>>({
+  } = useForm<z.infer<typeof cyclingFtpBoosterFormSchema>>({
     defaultValues: formData,
-    resolver: zodResolver(cyclistFtpBoosterFormSchema),
+    resolver: zodResolver(cyclingFtpBoosterFormSchema),
   });
 
   useEffect(() => {
