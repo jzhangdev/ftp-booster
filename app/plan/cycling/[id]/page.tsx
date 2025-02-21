@@ -1,5 +1,5 @@
 import { Plan } from "@/components/cycling-ftp-booster/plan";
-import { CyclingFtpBoosterPlan } from "@/hooks/use-generate-query";
+import { CyclingFtpBoosterPlan } from "@/data/fetch-generate-api";
 import { Container } from "@chakra-ui/react";
 import { Redis } from "@upstash/redis";
 import { notFound } from "next/navigation";

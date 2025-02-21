@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Provider as ChakraProvider } from "@/components/ui/provider";
-import ReactQueryProvider from "@/components/providers/react-query-provider";
 import { Analytics } from "@vercel/analytics/react";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
@@ -42,9 +41,7 @@ export default function RootLayout({
       ></link>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <ChakraProvider>
-          <ReactQueryProvider>
-            <NuqsAdapter>{children}</NuqsAdapter>
-          </ReactQueryProvider>
+          <NuqsAdapter>{children}</NuqsAdapter>
         </ChakraProvider>
         <GoogleAnalytics gaId={process.env.GOOGLE_ANALYTICS_ID!} />
         <Analytics />

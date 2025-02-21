@@ -22,6 +22,7 @@ import {
 } from "@/utils/schema";
 import { useQueryState, parseAsJson, parseAsBoolean } from "nuqs";
 import { useEffect, useRef } from "react";
+import { motion } from "motion/react";
 
 interface Props {
   isSubmitting: boolean;
@@ -168,6 +169,19 @@ export const Form = ({ isSubmitting, onSubmit }: Props) => {
                 loading={isSubmitting}
                 disabled={isSubmitting}
                 fontWeight="bold"
+                overflow="hidden"
+                spinner={
+                  <motion.span
+                    animate={{ x: ["100%", "-100%"] }}
+                    transition={{
+                      repeat: Infinity,
+                      duration: 1.5,
+                      ease: "linear",
+                    }}
+                  >
+                    🚴🚴‍♀️🚴‍♂️🚴🚴‍♀️🚴‍♂️🚴🚴‍♀️🚴‍♂️
+                  </motion.span>
+                }
               >
                 🚀 Launch with Strava
               </Button>

@@ -1,5 +1,4 @@
 import { CyclingFtpBoosterFormSchema } from "@/utils/schema";
-import { useQuery } from "@tanstack/react-query";
 
 export interface CyclingFtpBoosterPlan {
   id: string;
@@ -18,7 +17,7 @@ export interface CyclingFtpBoosterPlan {
   }>;
 }
 
-const fetchGenerateApi = async (
+export const fetchGenerateApi = async (
   payload: CyclingFtpBoosterFormSchema
 ): Promise<CyclingFtpBoosterPlan> => {
   const response = await fetch("/api/generate", {
@@ -34,12 +33,3 @@ const fetchGenerateApi = async (
 
   return await response.json();
 };
-
-export const useGenerateQuery = (data?: CyclingFtpBoosterFormSchema) =>
-  useQuery({
-    queryKey: ["fetchGenerate", data],
-    queryFn: () => fetchGenerateApi(data!),
-    select: (data) => data,
-    enabled: !!data,
-    refetchOnWindowFocus: false,
-  });

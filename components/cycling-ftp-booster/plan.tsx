@@ -1,4 +1,4 @@
-import { CyclingFtpBoosterPlan } from "@/hooks/use-generate-query";
+import { CyclingFtpBoosterPlan } from "@/data/fetch-generate-api";
 import {
   Box,
   Card,
