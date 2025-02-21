@@ -1,4 +1,4 @@
-import { CyclistFtpBooster } from "@/components/cyclist-ftp-booster";
+import { CyclistFtpBooster } from "@/components/cycling-ftp-booster";
 import { Suspense } from "react";
 
 export default function Home() {

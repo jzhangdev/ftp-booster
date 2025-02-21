@@ -1,4 +1,4 @@
-import { CyclistFtpBoosterPlanning } from "@/hooks/use-generate-query";
+import { CyclingFtpBoosterPlan } from "@/hooks/use-generate-query";
 import {
   Box,
   Card,
@@ -12,16 +12,19 @@ import {
 import { LuExternalLink } from "react-icons/lu";
 
 interface Props {
-  data: CyclistFtpBoosterPlanning;
+  data: CyclingFtpBoosterPlan;
+  isShowingPublicLink?: boolean;
 }
 
-export const Planning = ({ data }: Props) => {
+export const Plan = ({ data, isShowingPublicLink = false }: Props) => {
   return (
     <Card.Root>
       <Card.Header>
-        <Link href={`/share/${data.id}`}>
-          Open in public link <LuExternalLink />
-        </Link>
+        {isShowingPublicLink && (
+          <Link href={`/plan/cycling/${data.id}`}>
+            <LuExternalLink /> View in public link(expired after 90 days)
+          </Link>
+        )}
         {data.summary}
       </Card.Header>
       <Card.Body>
@@ -47,7 +50,7 @@ export const Planning = ({ data }: Props) => {
                                 <Em>{stage.name}</Em>
                               </Text>
                               <Text fontWeight="bold">
-                                {stage.duration}min@{stage.intensity}w
+                                {stage.duration}min@{stage.intensity}W
                               </Text>
                             </Flex>
                           </Box>
