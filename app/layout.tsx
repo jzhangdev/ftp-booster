@@ -47,9 +47,9 @@ export default function RootLayout({
             {children}
             <footer style={{ position: "sticky", bottom: 0, top: "100vh" }}>
               <Text paddingY="2" textAlign="center" color="fg.subtle">
-                2025 ©{" "}
+                2025 © FTPBooster.com.{" "}
                 <Link href="https://github.com/jzhangdev" target="_blank">
-                  jzhangdev
+                  Build by jzhangdev.
                 </Link>
               </Text>
             </footer>
