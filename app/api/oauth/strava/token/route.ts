@@ -27,7 +27,9 @@ export const GET = async (request: NextRequest) => {
   cookieStore.set("strava:accessToken", data.access_token, {
     httpOnly: true,
   });
-  return redirect(
-    `/?formData=${searchParams.get("state")!}&isFromStravaOauth=true`
-  );
+  while (cookieStore.get("strava:accessToken")) {
+    return redirect(
+      `/?formData=${searchParams.get("state")!}&isFromStravaOauth=true`
+    );
+  }
 };
