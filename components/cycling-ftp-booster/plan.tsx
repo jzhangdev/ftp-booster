@@ -7,8 +7,9 @@ import {
   Stack,
   Flex,
   Em,
-  Link,
+  Link as ChakraLink,
 } from "@chakra-ui/react";
+import Link from "next/link";
 import { LuExternalLink } from "react-icons/lu";
 
 interface Props {
@@ -21,9 +22,11 @@ export const Plan = ({ data, isShowingPublicLink = false }: Props) => {
     <Card.Root>
       <Card.Header>
         {isShowingPublicLink && (
-          <Link href={`/plan/cycling/${data.id}`}>
-            <LuExternalLink /> View in public link(expired after 90 days)
-          </Link>
+          <ChakraLink outline="none" asChild>
+            <Link href={`/plan/cycling/${data.id}`}>
+              <LuExternalLink /> View in public link(expired after 90 days)
+            </Link>
+          </ChakraLink>
         )}
         {data.summary}
       </Card.Header>

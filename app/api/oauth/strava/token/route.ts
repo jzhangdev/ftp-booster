@@ -28,6 +28,6 @@ export const GET = async (request: NextRequest) => {
     httpOnly: true,
   });
   return redirect(
-    `/?formData=${searchParams.get("state")!}&isConnectedToStrava=true`
+    `/?formData=${searchParams.get("state")!}&isFromStravaOauth=true`
   );
 };

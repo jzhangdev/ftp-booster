@@ -4,6 +4,8 @@ import { Provider as ChakraProvider } from "@/components/ui/provider";
 import { Analytics } from "@vercel/analytics/react";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
+import { Text } from "@chakra-ui/react";
+import Link from "next/link";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -41,7 +43,17 @@ export default function RootLayout({
       ></link>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <ChakraProvider>
-          <NuqsAdapter>{children}</NuqsAdapter>
+          <NuqsAdapter>
+            {children}
+            <footer style={{ position: "sticky", bottom: 0, top: "100vh" }}>
+              <Text paddingY="2" textAlign="center" color="fg.subtle">
+                2025 ©{" "}
+                <Link href="https://github.com/jzhangdev" target="_blank">
+                  jzhangdev
+                </Link>
+              </Text>
+            </footer>
+          </NuqsAdapter>
         </ChakraProvider>
         <GoogleAnalytics gaId={process.env.GOOGLE_ANALYTICS_ID!} />
         <Analytics />

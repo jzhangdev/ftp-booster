@@ -5,11 +5,25 @@ import { cookies } from "next/headers";
 import { DetailedActivityResponse } from "@/types/strava";
 import { Redis } from "@upstash/redis";
 import { v4 as uuidv4 } from "uuid";
+import {
+  cyclingFtpBoosterFormSchema,
+  CyclingFtpBoosterFormSchema,
+} from "@/utils/schema";
+
+const generatePlan = async (input: unknown) => {
+  const prompt = await hub.pull("cycling-ftp-booster");
+  const model = new ChatOpenAI({
+    model: "gpt-4o",
+  });
+  const output = await prompt.pipe(model).invoke(input);
+  return output;
+};
 
 export const POST = async (request: Request) => {
   const requestUrl = new URL(request.url);
   const cookieStore = await cookies();
-  const payload = await request.json();
+  const payload: CyclingFtpBoosterFormSchema =
+    await cyclingFtpBoosterFormSchema.parseAsync(await request.json());
   const stravaAccessToken = cookieStore.get("strava:accessToken");
   const redis = Redis.fromEnv();
 
@@ -35,6 +49,26 @@ export const POST = async (request: Request) => {
     );
   };
 
+  const savePlan = async (plan: unknown) => {
+    const id = uuidv4();
+    const ttl = 60 * 60 * 24 * 90; // 90 days
+    await redis.setex(`plan:cycling:${id}`, ttl, plan);
+    return id;
+  };
+
+  if (!payload.isConnectToStrava) {
+    const plan = await generatePlan({
+      ...payload,
+      activities: null,
+    });
+    const id = await savePlan(plan);
+
+    return NextResponse.json({
+      id,
+      ...plan,
+    });
+  }
+
   if (!stravaAccessToken || !stravaAccessToken.value) {
     return redirectToStravaOauth();
   }
@@ -59,11 +93,7 @@ export const POST = async (request: Request) => {
     const rideActivities = activities.filter(
       ({ sport_type }) => sport_type === "Ride"
     );
-    const prompt = await hub.pull("cycling-ftp-booster");
-    const model = new ChatOpenAI({
-      model: "gpt-4o",
-    });
-    const output = await prompt.pipe(model).invoke({
+    const plan = await generatePlan({
       ...payload,
       activities: rideActivities.map(
         ({
@@ -81,13 +111,11 @@ export const POST = async (request: Request) => {
         })
       ),
     });
-    const id = uuidv4();
-    const ttl = 60 * 60 * 24 * 90; // 90 days
-    await redis.setex(`plan:cycling:${id}`, ttl, output);
+    const id = await savePlan(plan);
 
     return NextResponse.json({
       id,
-      ...output,
+      ...plan,
     });
   } else {
     return activitiesResponse;
