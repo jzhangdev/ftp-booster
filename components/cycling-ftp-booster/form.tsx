@@ -7,6 +7,7 @@ import {
   Heading,
   HStack,
   Text,
+  VStack,
 } from "@chakra-ui/react";
 import {
   NumberInputField,
@@ -14,7 +15,7 @@ import {
 } from "@/components/ui/number-input";
 import { Field } from "@/components/ui/field";
 import { z } from "zod";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   CyclingFtpBoosterFormSchema,
@@ -23,6 +24,7 @@ import {
 import { useQueryState, parseAsJson, parseAsBoolean } from "nuqs";
 import { useEffect, useRef } from "react";
 import { motion } from "motion/react";
+import { Checkbox } from "../ui/checkbox";
 
 interface Props {
   isSubmitting: boolean;
@@ -30,8 +32,8 @@ interface Props {
 }
 
 export const Form = ({ isSubmitting, onSubmit }: Props) => {
-  const [isConnectedToStrava, setIsConnectedToStrava] = useQueryState(
-    "isConnectedToStrava",
+  const [isFromStravaOauth, setIsFromStravaOauth] = useQueryState(
+    "isFromStravaOauth",
     parseAsBoolean.withDefault(false)
   );
   const [formData, setFormData] = useQueryState(
@@ -41,6 +43,7 @@ export const Form = ({ isSubmitting, onSubmit }: Props) => {
       target: 150,
       daysOfWeek: 3,
       hoursOfDay: 2,
+      isConnectToStrava: false,
     })
   );
 
@@ -49,24 +52,22 @@ export const Form = ({ isSubmitting, onSubmit }: Props) => {
   const {
     handleSubmit,
     register,
+    control,
+    watch,
     formState: { errors },
   } = useForm<z.infer<typeof cyclingFtpBoosterFormSchema>>({
     defaultValues: formData,
     resolver: zodResolver(cyclingFtpBoosterFormSchema),
   });
 
+  const isConnectToStrava = watch("isConnectToStrava");
+
   useEffect(() => {
-    if (isConnectedToStrava && formRef.current) {
-      setIsConnectedToStrava(false);
+    if (isFromStravaOauth && formRef.current) {
+      setIsFromStravaOauth(false);
       onSubmit(formData);
     }
-  }, [
-    isConnectedToStrava,
-    formRef,
-    formData,
-    onSubmit,
-    setIsConnectedToStrava,
-  ]);
+  }, [isFromStravaOauth, formRef, formData, onSubmit, setIsFromStravaOauth]);
 
   return (
     <Card.Root>
@@ -90,7 +91,7 @@ export const Form = ({ isSubmitting, onSubmit }: Props) => {
             await onSubmit(data);
           })}
         >
-          <Fieldset.Root>
+          <Fieldset.Root disabled={isSubmitting}>
             <Fieldset.Content>
               <HStack>
                 <Field
@@ -162,29 +163,43 @@ export const Form = ({ isSubmitting, onSubmit }: Props) => {
               </HStack>
             </Fieldset.Content>
             <Center>
-              <Button
-                type="submit"
-                bgColor="#fc5200"
-                _hover={{ bgColor: "#cc4200" }}
-                loading={isSubmitting}
-                disabled={isSubmitting}
-                fontWeight="bold"
-                overflow="hidden"
-                spinner={
-                  <motion.span
-                    animate={{ x: ["100%", "-100%"] }}
-                    transition={{
-                      repeat: Infinity,
-                      duration: 1.5,
-                      ease: "linear",
-                    }}
-                  >
-                    🚴🚴‍♀️🚴‍♂️🚴🚴‍♀️🚴‍♂️🚴🚴‍♀️🚴‍♂️
-                  </motion.span>
-                }
-              >
-                🚀 Launch with Strava
-              </Button>
+              <VStack>
+                <Controller
+                  control={control}
+                  name="isConnectToStrava"
+                  render={({ field: { onChange, value } }) => (
+                    <Checkbox onChange={onChange} defaultChecked={value}>
+                      Connect to Strava
+                    </Checkbox>
+                  )}
+                />
+
+                <Button
+                  type="submit"
+                  bgColor={isConnectToStrava ? "#fc5200" : ""}
+                  _hover={{
+                    bgColor: isConnectToStrava ? "#cc4200" : "",
+                  }}
+                  loading={isSubmitting}
+                  disabled={isSubmitting}
+                  fontWeight="bold"
+                  overflow="hidden"
+                  spinner={
+                    <motion.span
+                      animate={{ x: ["100%", "-100%"] }}
+                      transition={{
+                        repeat: Infinity,
+                        duration: 1.5,
+                        ease: "linear",
+                      }}
+                    >
+                      🚴🚴‍♀️🚴‍♂️🚴🚴‍♀️🚴‍♂️🚴🚴‍♀️🚴‍♂️
+                    </motion.span>
+                  }
+                >
+                  🚀 Launch
+                </Button>
+              </VStack>
             </Center>
           </Fieldset.Root>
         </form>

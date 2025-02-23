@@ -12,7 +12,7 @@ export const CyclistFtpBooster = () => {
   >();
 
   return (
-    <Container paddingTop="24">
+    <Container paddingY="24">
       <Container maxW="4xl">
         <Form
           isSubmitting={isSubmitting}

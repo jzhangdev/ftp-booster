@@ -5,6 +5,7 @@ export const cyclingFtpBoosterFormSchema = z.object({
   target: z.number().min(0).positive(),
   daysOfWeek: z.number().min(0).positive(),
   hoursOfDay: z.number().min(0).positive(),
+  isConnectToStrava: z.boolean({ coerce: true }),
 });
 
 export type CyclingFtpBoosterFormSchema = z.infer<
