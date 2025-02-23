@@ -59,7 +59,7 @@ export const POST = async (request: Request) => {
   if (!payload.isConnectToStrava) {
     const plan = await generatePlan({
       ...payload,
-      activities: null,
+      activities: "",
     });
     const id = await savePlan(plan);
 
