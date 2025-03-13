@@ -86,7 +86,7 @@ const callCyclingFtpBoosterPromptNode = async (
   };
 };
 
-const requestImportStravaDataNode = (state: typeof StateAnnotation.State) => {
+const requestImportStravaDataNode = () => {
   const question =
     "Connecting to Strava will enhance planning accuracy.Would you like to link your Strava activities?";
   const { value: isStravaDataImported, activities } = interrupt({
@@ -94,34 +94,43 @@ const requestImportStravaDataNode = (state: typeof StateAnnotation.State) => {
     question,
   });
 
-  state.messages.push(
-    new HumanMessage({
-      content: [
-        {
-          type: "question",
-          question,
-          answer: isStravaDataImported ? "Yes" : "No",
-        },
-      ],
-    })
-  );
+  return {
+    messages: [
+      new HumanMessage({
+        content: [
+          {
+            type: "question",
+            question,
+            answer: isStravaDataImported ? "Yes" : "No",
+          },
+        ],
+      }),
+    ],
+    isStravaDataImported,
+    activities: activities ? activities : null,
+  };
+};
 
-  if (isStravaDataImported) {
-    state.messages.push(
+const isImportStravaActiviesCondition = (
+  state: typeof StateAnnotation.State
+) => {
+  return String(state.isStravaDataImported);
+};
+
+const importStravaActivitiesNode = (state: typeof StateAnnotation.State) => {
+  return {
+    messages: [
       new AIMessage({
         content: [
           {
             type: "text",
-            text: `${activities.length} ride activities imported from Strava.`,
+            text: `${
+              state.activities!.length
+            } ride activities imported from Strava.`,
           },
         ],
-      })
-    );
-  }
-
-  return {
-    isStravaDataImported,
-    activities: activities ? activities : null,
+      }),
+    ],
   };
 };
 
@@ -132,9 +141,18 @@ export const graph = new StateGraph(StateAnnotation)
   .addNode("setupTrainingGoalNode", setupTrainingGoalNode)
   .addNode("callCyclingFtpBoosterPromptNode", callCyclingFtpBoosterPromptNode)
   .addNode("requestImportStravaDataNode", requestImportStravaDataNode)
+  .addNode("importStravaActivitiesNode", importStravaActivitiesNode)
   .addEdge("__start__", "setupTrainingGoalTipsNode")
   .addEdge("setupTrainingGoalTipsNode", "requestImportStravaDataNode")
-  .addEdge("requestImportStravaDataNode", "setupTrainingGoalNode")
+  .addConditionalEdges(
+    "requestImportStravaDataNode",
+    isImportStravaActiviesCondition,
+    {
+      true: "importStravaActivitiesNode",
+      false: "setupTrainingGoalNode",
+    }
+  )
+  .addEdge("importStravaActivitiesNode", "setupTrainingGoalNode")
   .addEdge("setupTrainingGoalNode", "callCyclingFtpBoosterPromptNode")
   .addEdge("callCyclingFtpBoosterPromptNode", "__end__")
   .compile({ checkpointer });
