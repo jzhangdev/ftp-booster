@@ -1,0 +1,7 @@
+{
+  "dependencies": ["."],
+  "graphs": {
+    "FTPBooster": "./graph/ftp-booster-graph.ts:graph"
+  },
+  "env": ".env"
+}
