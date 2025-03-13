@@ -2,7 +2,7 @@
 
 import { Box, Container, Heading, Stack } from "@chakra-ui/react";
 import { useStream } from "@langchain/langgraph-sdk/react";
-import { useLayoutEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { SystemMessage } from "./system-message";
 import { RequestImportStravaDataInterrupt } from "./request-import-strava-data-interrupt";
 import { QuestionMessage } from "./question-message";
@@ -11,7 +11,6 @@ import { AiMessage } from "./ai-message";
 import { PlanningMessage } from "./planning-message";
 
 export const CyclingFtpBoosterAgent = () => {
-  const [isStarting, setIsStarting] = useState<boolean>(false);
   const [threadId, setThreadId] = useState<string | null>(null);
   const [isConnectingToStrava, setIsConnectingToStrava] =
     useState<boolean>(false);
@@ -20,7 +19,9 @@ export const CyclingFtpBoosterAgent = () => {
     apiUrl: process.env.NEXT_PUBLIC_GRAPH_API,
     assistantId: "FTPBooster",
     threadId,
-    onThreadId: setThreadId,
+    onThreadId: (threadId) => {
+      setThreadId(threadId);
+    },
   });
 
   const onConfirmConnectToStrava = async () => {
@@ -43,14 +44,13 @@ export const CyclingFtpBoosterAgent = () => {
     }
   };
 
-  useLayoutEffect(() => {
-    if (!isStarting) {
-      setIsStarting(true);
+  useEffect(() => {
+    if (!threadId && !thread.isLoading) {
       thread.submit({
         messages: [],
       });
     }
-  }, [isStarting, thread]);
+  }, [threadId, thread]);
 
   return (
     <Container>
