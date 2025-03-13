@@ -58,6 +58,9 @@ export const CyclingFtpBoosterAgent = () => {
         <Heading>🚴 Cycling FTP Booster</Heading>
       </Box>
       <Stack>
+        {!threadId && (
+          <SystemMessage>🚴🚴‍♀️🚴‍♂️ Starting new thread...</SystemMessage>
+        )}
         {thread.messages.map((message) => {
           switch (message.type) {
             case "system":

@@ -11,7 +11,7 @@ import {
   CyclingFtpBoosterFormSchema,
   cyclingFtpBoosterFormSchema,
 } from "@/utils/schema";
-import { motion } from "motion/react";
+import { MessageMotion } from "./message-motion";
 
 interface Props {
   isSubmitting: boolean;
@@ -38,100 +38,99 @@ export const SetupTrainingGoalInterrupt = ({
   });
 
   return (
-    <Box px="4" py="2" maxW="xl" borderRadius="md" bg="bg.subtle">
-      <form
-        onSubmit={handleSubmit(async (data) => {
-          onSubmit(data);
-        })}
-      >
-        <Fieldset.Root disabled={isSubmitting}>
-          <Fieldset.Content>
-            <HStack>
-              <Field
-                label="Current FTP (W)"
-                invalid={!!errors.current}
-                errorText={errors.current?.message}
-              >
-                <NumberInputRoot
-                  inputMode="numeric"
-                  size="md"
-                  min={0}
-                  max={2000}
-                  step={5}
+    <MessageMotion>
+      <Box px="4" py="2" maxW="xl" borderRadius="md" bg="bg.subtle">
+        <form
+          onSubmit={handleSubmit(async (data) => {
+            onSubmit(data);
+          })}
+        >
+          <Fieldset.Root disabled={isSubmitting}>
+            <Fieldset.Content>
+              <HStack>
+                <Field
+                  label="Current FTP (W)"
+                  invalid={!!errors.current}
+                  errorText={errors.current?.message}
                 >
-                  <NumberInputField
-                    {...register("current", { valueAsNumber: true })}
-                  />
-                </NumberInputRoot>
-              </Field>
-              <Field
-                label="Target FTP (W)"
-                invalid={!!errors.target}
-                errorText={errors.target?.message}
-              >
-                <NumberInputRoot
-                  inputMode="numeric"
-                  size="md"
-                  min={0}
-                  max={2000}
-                  step={5}
+                  <NumberInputRoot
+                    inputMode="numeric"
+                    size="md"
+                    min={0}
+                    max={2000}
+                    step={5}
+                  >
+                    <NumberInputField
+                      {...register("current", { valueAsNumber: true })}
+                    />
+                  </NumberInputRoot>
+                </Field>
+                <Field
+                  label="Target FTP (W)"
+                  invalid={!!errors.target}
+                  errorText={errors.target?.message}
                 >
-                  <NumberInputField
-                    {...register("target", { valueAsNumber: true })}
-                  />
-                </NumberInputRoot>
-              </Field>
-            </HStack>
-            <HStack>
-              <Field
-                label="Day of week"
-                invalid={!!errors.daysOfWeek}
-                errorText={errors.daysOfWeek?.message}
-              >
-                <NumberInputRoot inputMode="numeric" size="md" min={0} max={7}>
-                  <NumberInputField
-                    {...register("daysOfWeek", { valueAsNumber: true })}
-                  />
-                </NumberInputRoot>
-              </Field>
-              <Field
-                label="Hours of day"
-                invalid={!!errors.hoursOfDay}
-                errorText={errors.hoursOfDay?.message}
-              >
-                <NumberInputRoot inputMode="numeric" size="md" min={0} max={12}>
-                  <NumberInputField
-                    {...register("hoursOfDay", { valueAsNumber: true })}
-                  />
-                </NumberInputRoot>
-              </Field>
-            </HStack>
-          </Fieldset.Content>
-          <Center>
-            <Button
-              type="submit"
-              loading={isSubmitting}
-              disabled={isSubmitting}
-              fontWeight="bold"
-              overflow="hidden"
-              spinner={
-                <motion.span
-                  animate={{ x: ["100%", "-100%"] }}
-                  transition={{
-                    repeat: Infinity,
-                    duration: 1.5,
-                    ease: "linear",
-                  }}
+                  <NumberInputRoot
+                    inputMode="numeric"
+                    size="md"
+                    min={0}
+                    max={2000}
+                    step={5}
+                  >
+                    <NumberInputField
+                      {...register("target", { valueAsNumber: true })}
+                    />
+                  </NumberInputRoot>
+                </Field>
+              </HStack>
+              <HStack>
+                <Field
+                  label="Day of week"
+                  invalid={!!errors.daysOfWeek}
+                  errorText={errors.daysOfWeek?.message}
                 >
-                  🚴🚴‍♀️🚴‍♂️🚴🚴‍♀️🚴‍♂️🚴🚴‍♀️🚴‍♂️
-                </motion.span>
-              }
-            >
-              🚀 Launch
-            </Button>
-          </Center>
-        </Fieldset.Root>
-      </form>
-    </Box>
+                  <NumberInputRoot
+                    inputMode="numeric"
+                    size="md"
+                    min={0}
+                    max={7}
+                  >
+                    <NumberInputField
+                      {...register("daysOfWeek", { valueAsNumber: true })}
+                    />
+                  </NumberInputRoot>
+                </Field>
+                <Field
+                  label="Hours of day"
+                  invalid={!!errors.hoursOfDay}
+                  errorText={errors.hoursOfDay?.message}
+                >
+                  <NumberInputRoot
+                    inputMode="numeric"
+                    size="md"
+                    min={0}
+                    max={12}
+                  >
+                    <NumberInputField
+                      {...register("hoursOfDay", { valueAsNumber: true })}
+                    />
+                  </NumberInputRoot>
+                </Field>
+              </HStack>
+            </Fieldset.Content>
+            <Center>
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                fontWeight="bold"
+                overflow="hidden"
+              >
+                🚀 Launch
+              </Button>
+            </Center>
+          </Fieldset.Root>
+        </form>
+      </Box>
+    </MessageMotion>
   );
 };
