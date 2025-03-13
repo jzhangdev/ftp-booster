@@ -28,8 +28,6 @@ export const GET = async (request: NextRequest) => {
     httpOnly: true,
   });
   while (cookieStore.get("strava:accessToken")) {
-    return redirect(
-      `/?formData=${searchParams.get("state")!}&isFromStravaOauth=true`
-    );
+    return redirect("/");
   }
 };
