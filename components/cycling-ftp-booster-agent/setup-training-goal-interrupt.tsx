@@ -120,6 +120,7 @@ export const SetupTrainingGoalInterrupt = ({
             </Fieldset.Content>
             <Center>
               <Button
+                variant="outline"
                 type="submit"
                 disabled={isSubmitting}
                 fontWeight="bold"
