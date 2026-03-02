@@ -88,7 +88,7 @@ const callCyclingFtpBoosterPromptNode = async (
 
 const requestImportStravaDataNode = () => {
   const question =
-    "Connecting to Strava will enhance planning accuracy.Would you like to link your Strava activities?";
+    "Connecting to Strava will enhance planning accuracy. Would you like to link your Strava activities?";
   const { value: isStravaDataImported, activities } = interrupt({
     type: "requestImportStravaData",
     question,

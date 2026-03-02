@@ -1,47 +1,88 @@
 "use client";
 
-import { Box, Container, Heading, Stack } from "@chakra-ui/react";
 import { useStream } from "@langchain/langgraph-sdk/react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+
+import {
+  Conversation,
+  ConversationContent,
+  ConversationScrollButton,
+} from "@/components/ai-elements/conversation";
+import { Card, CardContent } from "@/components/ui/card";
+import type { FtpUIMessage } from "@/types/chat-message";
+import type { CyclingFtpBoosterFormSchema } from "@/utils/schema";
+import { normalizeLanggraphMessages } from "@/utils/chat/normalize-langgraph";
+
+import { MessagePartRenderer } from "./message-part-renderer";
 import { SystemMessage } from "./system-message";
-import { RequestImportStravaDataInterrupt } from "./request-import-strava-data-interrupt";
-import { QuestionMessage } from "./question-message";
-import { SetupTrainingGoalInterrupt } from "./setup-training-goal-interrupt";
-import { AiMessage } from "./ai-message";
-import { PlanningMessage } from "./planning-message";
+
+type DataMessagePart = Extract<
+  FtpUIMessage["parts"][number],
+  { type: `data-${string}` }
+>;
+
+const isDataPart = (
+  part: FtpUIMessage["parts"][number]
+): part is DataMessagePart => {
+  return part.type.startsWith("data-");
+};
 
 export const CyclingFtpBoosterAgent = () => {
   const [threadId, setThreadId] = useState<string | null>(null);
-  const [isConnectingToStrava, setIsConnectingToStrava] =
-    useState<boolean>(false);
+  const [isConnectingToStrava, setIsConnectingToStrava] = useState(false);
 
   const thread = useStream({
     apiUrl: process.env.NEXT_PUBLIC_GRAPH_API,
     assistantId: "FTPBooster",
     threadId,
-    onThreadId: (threadId) => {
-      setThreadId(threadId);
+    onThreadId: (nextThreadId) => {
+      setThreadId(nextThreadId);
     },
   });
 
+  const uiMessages = useMemo(
+    () => normalizeLanggraphMessages(thread.messages, thread.interrupt),
+    [thread.messages, thread.interrupt]
+  );
+
   const onConfirmConnectToStrava = async () => {
     setIsConnectingToStrava(true);
+
     try {
       const response = await fetch("/api/strava/activities");
       if (response.status === 200) {
-        const data = await response.json();
-        return Promise.resolve(data);
+        const activities = await response.json();
+        thread.submit(undefined, {
+          command: {
+            resume: { value: true, activities },
+          },
+        });
+        return;
       }
+
       if (response.status === 401) {
         const { redirectUrl } = await response.json();
         window.location.href = redirectUrl;
-        return Promise.reject();
       }
-    } catch (error) {
-      return Promise.reject(error);
     } finally {
       setIsConnectingToStrava(false);
     }
+  };
+
+  const onSkipConnectToStrava = () => {
+    thread.submit(undefined, {
+      command: {
+        resume: { value: false },
+      },
+    });
+  };
+
+  const onSubmitTrainingGoal = (data: CyclingFtpBoosterFormSchema) => {
+    thread.submit(undefined, {
+      command: {
+        resume: data,
+      },
+    });
   };
 
   useEffect(() => {
@@ -53,121 +94,48 @@ export const CyclingFtpBoosterAgent = () => {
   }, [threadId, thread]);
 
   return (
-    <Container>
-      <Box py="4">
-        <Heading>🚴 Cycling FTP Booster</Heading>
-      </Box>
-      <Stack>
-        {!threadId && (
-          <SystemMessage>🚴🚴‍♀️🚴‍♂️ Starting new thread...</SystemMessage>
-        )}
-        {thread.messages.map((message) => {
-          switch (message.type) {
-            case "system":
+    <main className="mx-auto w-full max-w-6xl px-4 py-6">
+      <Card className="overflow-hidden border-sky-200/70 bg-white/75 shadow-lg backdrop-blur-sm">
+        <CardContent className="p-0">
+          <header className="border-b border-sky-100 bg-gradient-to-r from-sky-50 to-emerald-50 px-5 py-4">
+            <h1 className="text-2xl font-bold tracking-tight text-slate-800">
+              🚴 Cycling FTP Booster
+            </h1>
+            <p className="mt-1 text-sm text-slate-600">
+              Personalized FTP planning powered by LangGraph and streaming AI responses.
+            </p>
+          </header>
+        </CardContent>
+      </Card>
+
+      <Conversation className="mt-4 h-[calc(100vh-260px)] sm:h-[calc(100vh-220px)]">
+        <ConversationContent className="gap-1 px-4 py-4 sm:px-5">
+          {!threadId ? <SystemMessage>🚴🚴‍♀️🚴‍♂️ Starting new thread...</SystemMessage> : null}
+
+          {uiMessages.map((message) =>
+            message.parts.map((part, partIndex) => {
+              if (!isDataPart(part)) {
+                return null;
+              }
+
+              const key = "id" in part && part.id ? part.id : `${message.id}:${partIndex}`;
+
               return (
-                <SystemMessage key={message.id}>
-                  {message.content as string}
-                </SystemMessage>
-              );
-            case "ai":
-              if (message.content[0]) {
-                switch (
-                  (message.content[0] as Record<string, unknown>)["type"]
-                ) {
-                  case "text":
-                    return (
-                      <AiMessage>
-                        {(message.content[0] as Record<string, string>).text}
-                      </AiMessage>
-                    );
-                  case "planning":
-                    return (
-                      <PlanningMessage
-                        data={
-                          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                          (message.content[0] as Record<string, any>)["output"]
-                        }
-                      />
-                    );
-
-                  default:
-                    return <AiMessage>Loading...</AiMessage>;
-                }
-              }
-
-            case "human":
-              if (message.content[0]) {
-                switch (
-                  (message.content[0] as Record<string, unknown>)["type"]
-                ) {
-                  case "question":
-                    return (
-                      <Box alignSelf="end">
-                        <QuestionMessage
-                          question={
-                            (message.content[0] as Record<string, string>)[
-                              "question"
-                            ]
-                          }
-                          answer={
-                            (message.content[0] as Record<string, string>)[
-                              "answer"
-                            ]
-                          }
-                        />
-                      </Box>
-                    );
-
-                  default:
-                    return null;
-                }
-              }
-
-            default:
-              return null;
-          }
-        })}
-        {thread.interrupt && (
-          <>
-            {(thread.interrupt.value as Record<string, unknown>).type ===
-              "requestImportStravaData" && (
-              <Box alignSelf="end">
-                <RequestImportStravaDataInterrupt
-                  isLoading={isConnectingToStrava}
-                  onYes={async () => {
-                    const activities = await onConfirmConnectToStrava();
-                    thread.submit(undefined, {
-                      command: { resume: { value: true, activities } },
-                    });
-                  }}
-                  onNo={() => {
-                    thread.submit(undefined, {
-                      command: { resume: { value: false } },
-                    });
-                  }}
-                >
-                  {(thread.interrupt.value as Record<string, string>).question}
-                </RequestImportStravaDataInterrupt>
-              </Box>
-            )}
-            {(thread.interrupt.value as Record<string, unknown>).type ===
-              "setupTrainingGoal" && (
-              <Box alignSelf="end">
-                <SetupTrainingGoalInterrupt
-                  isSubmitting={thread.isLoading}
-                  onSubmit={(data) => {
-                    thread.submit(undefined, {
-                      command: {
-                        resume: data,
-                      },
-                    });
-                  }}
+                <MessagePartRenderer
+                  key={key}
+                  part={part}
+                  isConnectingToStrava={isConnectingToStrava}
+                  isSubmittingTrainingGoal={thread.isLoading}
+                  onConfirmConnectToStrava={onConfirmConnectToStrava}
+                  onSkipConnectToStrava={onSkipConnectToStrava}
+                  onSubmitTrainingGoal={onSubmitTrainingGoal}
                 />
-              </Box>
-            )}
-          </>
-        )}
-      </Stack>
-    </Container>
+              );
+            })
+          )}
+        </ConversationContent>
+        <ConversationScrollButton />
+      </Conversation>
+    </main>
   );
 };

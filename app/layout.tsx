@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { Provider as ChakraProvider } from "@/components/ui/provider";
 import { Analytics } from "@vercel/analytics/react";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
-import { Text } from "@chakra-ui/react";
 import Link from "next/link";
+
+import "./globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,6 +19,9 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "FTP Booster",
+  icons: {
+    icon: "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎯</text></svg>",
+  },
   keywords: [
     "FTP improvement",
     "Personalized workouts",
@@ -37,24 +40,20 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <link
-        rel="icon"
-        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎯</text></svg>"
-      ></link>
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <ChakraProvider>
-          <NuqsAdapter>
-            {children}
-            <footer style={{ position: "sticky", bottom: 0, top: "100vh" }}>
-              <Text paddingY="2" textAlign="center" color="fg.subtle">
-                2025 © FTPBooster.com.{" "}
-                <Link href="https://github.com/jzhangdev" target="_blank">
-                  Build by jzhangdev.
-                </Link>
-              </Text>
-            </footer>
-          </NuqsAdapter>
-        </ChakraProvider>
+      <body className={`${geistSans.variable} ${geistMono.variable} font-sans`}>
+        <NuqsAdapter>
+          {children}
+          <footer className="sticky bottom-0 top-[100vh] border-t border-slate-200/70 bg-white/70 py-2 text-center text-sm text-slate-600 backdrop-blur-sm">
+            2025 © FTPBooster.com.{" "}
+            <Link
+              href="https://github.com/jzhangdev"
+              target="_blank"
+              className="font-medium text-sky-700 hover:text-sky-600"
+            >
+              Build by jzhangdev.
+            </Link>
+          </footer>
+        </NuqsAdapter>
         <GoogleAnalytics gaId={process.env.GOOGLE_ANALYTICS_ID!} />
         <Analytics />
       </body>

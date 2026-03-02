@@ -1,5 +1,8 @@
-import { Box, Button, ButtonGroup, Text } from "@chakra-ui/react";
 import { PropsWithChildren } from "react";
+
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+
 import { MessageMotion } from "./message-motion";
 
 interface Props {
@@ -16,17 +19,19 @@ export const RequestImportStravaDataInterrupt = ({
 }: PropsWithChildren<Props>) => {
   return (
     <MessageMotion>
-      <Box p="2" maxW="xl" borderRadius="md" bg="bg.subtle">
-        <Text>{children}</Text>
-        <ButtonGroup>
-          <Button variant="plain" onClick={onYes} disabled={isLoading}>
-            Yes
-          </Button>
-          <Button variant="plain" onClick={onNo} disabled={isLoading}>
-            No
-          </Button>
-        </ButtonGroup>
-      </Box>
+      <Card className="max-w-3xl border-sky-300/70 bg-sky-50/90 backdrop-blur-sm">
+        <CardContent className="space-y-3 p-4 text-sm text-slate-700">
+          <p>{children}</p>
+          <div className="flex items-center gap-2">
+            <Button variant="default" onClick={onYes} disabled={isLoading}>
+              Yes
+            </Button>
+            <Button variant="outline" onClick={onNo} disabled={isLoading}>
+              No
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
     </MessageMotion>
   );
 };
