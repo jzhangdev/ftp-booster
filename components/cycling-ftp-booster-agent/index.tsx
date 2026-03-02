@@ -105,39 +105,37 @@ export const CyclingFtpBoosterAgent = () => {
               Personalized FTP planning powered by LangGraph and streaming AI responses.
             </p>
           </header>
-
-          <Conversation className="h-[calc(100vh-260px)] sm:h-[calc(100vh-220px)]">
-            <ConversationContent className="gap-1 px-4 py-4 sm:px-5">
-              {!threadId ? (
-                <SystemMessage>🚴🚴‍♀️🚴‍♂️ Starting new thread...</SystemMessage>
-              ) : null}
-
-              {uiMessages.map((message) =>
-                message.parts.map((part, partIndex) => {
-                  if (!isDataPart(part)) {
-                    return null;
-                  }
-
-                  const key = "id" in part && part.id ? part.id : `${message.id}:${partIndex}`;
-
-                  return (
-                    <MessagePartRenderer
-                      key={key}
-                      part={part}
-                      isConnectingToStrava={isConnectingToStrava}
-                      isSubmittingTrainingGoal={thread.isLoading}
-                      onConfirmConnectToStrava={onConfirmConnectToStrava}
-                      onSkipConnectToStrava={onSkipConnectToStrava}
-                      onSubmitTrainingGoal={onSubmitTrainingGoal}
-                    />
-                  );
-                })
-              )}
-            </ConversationContent>
-            <ConversationScrollButton />
-          </Conversation>
         </CardContent>
       </Card>
+
+      <Conversation className="mt-4 h-[calc(100vh-260px)] sm:h-[calc(100vh-220px)]">
+        <ConversationContent className="gap-1 px-4 py-4 sm:px-5">
+          {!threadId ? <SystemMessage>🚴🚴‍♀️🚴‍♂️ Starting new thread...</SystemMessage> : null}
+
+          {uiMessages.map((message) =>
+            message.parts.map((part, partIndex) => {
+              if (!isDataPart(part)) {
+                return null;
+              }
+
+              const key = "id" in part && part.id ? part.id : `${message.id}:${partIndex}`;
+
+              return (
+                <MessagePartRenderer
+                  key={key}
+                  part={part}
+                  isConnectingToStrava={isConnectingToStrava}
+                  isSubmittingTrainingGoal={thread.isLoading}
+                  onConfirmConnectToStrava={onConfirmConnectToStrava}
+                  onSkipConnectToStrava={onSkipConnectToStrava}
+                  onSubmitTrainingGoal={onSubmitTrainingGoal}
+                />
+              );
+            })
+          )}
+        </ConversationContent>
+        <ConversationScrollButton />
+      </Conversation>
     </main>
   );
 };
