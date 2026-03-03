@@ -144,6 +144,7 @@ Rendered by `components/cycling-ftp-booster-agent/planning-message.tsx` from `ty
 | Variable | Used by | Purpose |
 |---|---|---|
 | `GRAPH_API` | `components/cycling-ftp-booster-agent/index.tsx` | Base URL for LangGraph streaming API. |
+| `APP_DOMAIN` | `app/api/strava/activities/route.ts` | Optional app domain used to build Strava OAuth `redirect_uri` when reverse proxies make request origin unreliable. |
 | `STRAVA_APP_CLIENT_ID` | `app/api/strava/activities/route.ts`, `app/api/oauth/strava/token/route.ts` | Builds OAuth authorize URL and token exchange payload. |
 | `STRAVA_APP_CLIENT_SECRET` | `app/api/oauth/strava/token/route.ts` | OAuth code exchange secret. |
 | `GOOGLE_ANALYTICS_ID` | `app/layout.tsx` | Enables Google Analytics script. |

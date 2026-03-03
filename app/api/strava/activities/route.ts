@@ -2,6 +2,23 @@ import { DetailedActivityResponse } from "@/types/strava";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
+const getOauthRedirectOrigin = (requestUrl: URL) => {
+  const appDomain = process.env.APP_DOMAIN?.trim();
+  if (!appDomain) {
+    return requestUrl.origin;
+  }
+
+  const normalizedDomain = /^https?:\/\//i.test(appDomain)
+    ? appDomain
+    : `https://${appDomain}`;
+
+  try {
+    return new URL(normalizedDomain).origin;
+  } catch {
+    return requestUrl.origin;
+  }
+};
+
 export const GET = async (request: Request) => {
   const requestUrl = new URL(request.url);
   const cookie = await cookies();
@@ -9,7 +26,10 @@ export const GET = async (request: Request) => {
 
   const redirectToStravaOauth = () => {
     const oauthUrl = new URL("https://www.strava.com/oauth/authorize");
-    const redirectUrl = new URL(`${requestUrl.origin}/api/oauth/strava/token`);
+    const redirectUrl = new URL(
+      "/api/oauth/strava/token",
+      getOauthRedirectOrigin(requestUrl)
+    );
     oauthUrl.searchParams.append(
       "client_id",
       process.env.STRAVA_APP_CLIENT_ID!
