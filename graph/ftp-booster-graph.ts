@@ -101,7 +101,9 @@ const requestImportStravaDataNode = () => {
           {
             type: "question",
             question,
-            answer: isStravaDataImported ? "Yes" : "No",
+            answer: isStravaDataImported
+              ? "I chose to connect my Strava activities for better plan accuracy."
+              : "I chose not to connect Strava activities for now.",
           },
         ],
       }),

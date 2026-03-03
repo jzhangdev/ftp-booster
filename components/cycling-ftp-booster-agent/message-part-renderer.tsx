@@ -1,8 +1,7 @@
 import type { CyclingFtpBoosterFormSchema } from "@/utils/schema";
 import type { FtpUIMessage } from "@/types/chat-message";
-import { Badge } from "@/components/ui/badge";
 
-import { Message, MessageAvatar, MessageContent } from "@/components/ai-elements/message";
+import { Message, MessageContent } from "@/components/ai-elements/message";
 import { PlanningMessage } from "./planning-message";
 import { QuestionMessage } from "./question-message";
 import { RequestImportStravaDataInterrupt } from "./request-import-strava-data-interrupt";
@@ -36,22 +35,13 @@ export const MessagePartRenderer = ({
     case "data-status": {
       return (
         <Message from="assistant">
-          <MessageAvatar from="assistant" />
           <MessageContent
             className={
               part.data.kind === "system"
-                ? "bg-amber-50 text-slate-800 border border-amber-200/80"
+                ? "border-slate-200 bg-slate-100 text-slate-700"
                 : undefined
             }
           >
-            {part.data.kind === "system" ? (
-              <Badge
-                variant="secondary"
-                className="mb-2 w-fit bg-amber-100 text-amber-900"
-              >
-                System
-              </Badge>
-            ) : null}
             <p>{part.data.text}</p>
           </MessageContent>
         </Message>
@@ -61,11 +51,7 @@ export const MessagePartRenderer = ({
     case "data-question": {
       return (
         <Message from="user">
-          <QuestionMessage
-            question={part.data.question}
-            answer={part.data.answer}
-          />
-          <MessageAvatar from="user" />
+          <QuestionMessage answer={part.data.answer} />
         </Message>
       );
     }
@@ -73,7 +59,6 @@ export const MessagePartRenderer = ({
     case "data-plan": {
       return (
         <Message from="assistant">
-          <MessageAvatar from="assistant" />
           <PlanningMessage data={part.data.output} />
         </Message>
       );
@@ -89,7 +74,6 @@ export const MessagePartRenderer = ({
           >
             {part.data.question}
           </RequestImportStravaDataInterrupt>
-          <MessageAvatar from="user" />
         </Message>
       );
     }
@@ -102,7 +86,6 @@ export const MessagePartRenderer = ({
             title={part.data.question}
             onSubmit={onSubmitTrainingGoal}
           />
-          <MessageAvatar from="user" />
         </Message>
       );
     }
