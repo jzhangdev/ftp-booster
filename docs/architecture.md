@@ -12,7 +12,7 @@ The architecture has two server boundaries:
 ```mermaid
 flowchart LR
   U[User Browser] --> N[Next.js App]
-  N -->|useStream via NEXT_PUBLIC_GRAPH_API| G[LangGraph API FTPBooster graph]
+  N -->|useStream via GRAPH_API| G[LangGraph API FTPBooster graph]
   N -->|/api/strava/*| S[Strava API]
   S -->|OAuth callback| N
   G --> O[OpenAI model via LangChain]
@@ -143,7 +143,7 @@ Rendered by `components/cycling-ftp-booster-agent/planning-message.tsx` from `ty
 
 | Variable | Used by | Purpose |
 |---|---|---|
-| `NEXT_PUBLIC_GRAPH_API` | `components/cycling-ftp-booster-agent/index.tsx` | Base URL for LangGraph streaming API. |
+| `GRAPH_API` | `components/cycling-ftp-booster-agent/index.tsx` | Base URL for LangGraph streaming API. |
 | `STRAVA_APP_CLIENT_ID` | `app/api/strava/activities/route.ts`, `app/api/oauth/strava/token/route.ts` | Builds OAuth authorize URL and token exchange payload. |
 | `STRAVA_APP_CLIENT_SECRET` | `app/api/oauth/strava/token/route.ts` | OAuth code exchange secret. |
 | `GOOGLE_ANALYTICS_ID` | `app/layout.tsx` | Enables Google Analytics script. |

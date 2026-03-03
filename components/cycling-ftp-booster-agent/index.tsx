@@ -32,7 +32,7 @@ export const CyclingFtpBoosterAgent = () => {
   const [isConnectingToStrava, setIsConnectingToStrava] = useState(false);
 
   const thread = useStream({
-    apiUrl: process.env.NEXT_PUBLIC_GRAPH_API,
+    apiUrl: process.env.GRAPH_API,
     assistantId: "FTPBooster",
     threadId,
     onThreadId: (nextThreadId) => {
