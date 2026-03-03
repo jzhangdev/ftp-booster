@@ -15,7 +15,7 @@
     "@emotion/react": "^11.14.0",
     "@hookform/resolvers": "^4.0.0",
     "@langchain/core": "^0.3.40",
-    "@langchain/langgraph": "^0.2.49",
+    "@langchain/langgraph": "^0.2.74",
     "@langchain/langgraph-cli": "^0.0.14",
     "@langchain/langgraph-sdk": "^0.0.50",
     "@langchain/openai": "^0.4.3",
