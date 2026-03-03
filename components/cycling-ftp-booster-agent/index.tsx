@@ -27,12 +27,12 @@ const isDataPart = (
   return part.type.startsWith("data-");
 };
 
-export const CyclingFtpBoosterAgent = () => {
+export const CyclingFtpBoosterAgent = ({ graphApi }: { graphApi: string }) => {
   const [threadId, setThreadId] = useState<string | null>(null);
   const [isConnectingToStrava, setIsConnectingToStrava] = useState(false);
 
   const thread = useStream({
-    apiUrl: process.env.GRAPH_API,
+    apiUrl: graphApi,
     assistantId: "FTPBooster",
     threadId,
     onThreadId: (nextThreadId) => {

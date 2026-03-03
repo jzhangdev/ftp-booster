@@ -1,9 +1,5 @@
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {
-  env: {
-    GRAPH_API: process.env.GRAPH_API,
-  },
-};
+const nextConfig: NextConfig = {};
 
 export default nextConfig;

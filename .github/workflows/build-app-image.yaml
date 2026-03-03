@@ -39,12 +39,6 @@ jobs:
 
       - name: Build and push Docker images
         uses: iloveitaly/github-action-nixpacks@main
-        env:
-          GRAPH_API: ${{ vars.GRAPH_API }}
-          STRAVA_APP_CLIENT_ID: ${{ vars.STRAVA_APP_CLIENT_ID }}
-          STRAVA_APP_CLIENT_SECRET: ${{ secrets.STRAVA_APP_CLIENT_SECRET }}
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          LANGCHAIN_API_KEY: ${{ secrets.LANGCHAIN_API_KEY }}
         with:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
