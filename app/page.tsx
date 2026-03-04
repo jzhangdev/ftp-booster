@@ -1,14 +1,12 @@
-import { CyclingFtpBoosterAgent } from "@/components/cycling-ftp-booster-agent";
-import { Suspense } from "react";
+"use client";
 
-export const dynamic = "force-dynamic";
+import { Suspense } from "react";
+import { Agent } from "./agent";
 
 export default function Home() {
-  const graphApi = process.env.GRAPH_API ?? "";
-
   return (
     <Suspense>
-      <CyclingFtpBoosterAgent graphApi={graphApi} />
+      <Agent />
     </Suspense>
   );
 }
